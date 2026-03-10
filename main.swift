@@ -108,14 +108,13 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
     let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
     let flags = event.flags
 
-    if keyCode == 49 && type == .keyDown && flags.contains(.maskShift) && flags.contains(.maskCommand) && !isRecording {
-        startRecording()
-        return nil // consume the event
-    }
-
-    if keyCode == 49 && type == .keyUp && isRecording {
-        DispatchQueue.global().async {
-            stopAndTranscribe()
+    if keyCode == 49 && type == .keyDown && flags.contains(.maskShift) && flags.contains(.maskCommand) {
+        if !isRecording {
+            startRecording()
+        } else {
+            DispatchQueue.global().async {
+                stopAndTranscribe()
+            }
         }
         return nil
     }
